@@ -6,11 +6,13 @@
 #include <ndi.h>
 
 #ifdef __arm__
-#include "bcm_host.h"
+//#include "bcm_host.h"
 #endif
 
 #include "../common/ogl.h"
 #include "../common/yuv.h"
+
+#include <mutex>
 
 std::list<ndi_packet_video_t*> _queue;
 std::mutex _mutex;
@@ -62,7 +64,7 @@ int main(int argc, char* argv[]) {
 	int ret;
 
 #ifdef __arm__
-	bcm_host_init();
+	//bcm_host_init();
 #endif
 
     // Initialize OpenGL
@@ -133,7 +135,7 @@ int main(int argc, char* argv[]) {
 
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT);
-        glLoadIdentity();
+        //glLoadIdentity();
         
         // Pop most recent frame off the queue
         ndi_packet_video_t * video = NULL;

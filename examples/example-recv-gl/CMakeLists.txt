@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 project(example-recv-gl)
 
@@ -10,8 +11,8 @@ endif ()
 
 if (LINUX)
 	include_directories(/opt/vc/include/)
-	link_directories(/opt/vc/lib/ /usr/lib/arm-linux-gnueabihf/)
-	link_libraries(bcm_host GLESv2 EGL avahi-client avahi-common)
+	link_directories(/opt/vc/lib/)
+	link_libraries(GLESv2 EGL avahi-client avahi-common)
 endif()
 
 if (NOT LINUX)
@@ -50,6 +51,10 @@ link_libraries(
 	avcodec
 	avformat
 	avutil
+	avahi-client
+	GLEW
+	glut
+	glfw
 )
 
 add_executable(example-recv-gl

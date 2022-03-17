@@ -11,3 +11,13 @@ This library is based on the work by Jean-Baptiste Kempf (https://code.videolan.
 
 ## License
 LGPL v2.1
+
+## Building (AA EDIT)
+
+1. Install the following extra system dependencies:
+    * libavahi-client-dev
+    * More that I will add to this list soon
+2. `cmake -S . -B .` in the top directory
+3. `cd examples/example-recv-gl`
+4. `cmake -S . -B build`
+5. `cd build && make`
