@@ -15,6 +15,8 @@ link_directories(
 )
 link_libraries(
 	ndi
+	avahi-client
+	avahi-common
 )
 
 add_executable(example-find

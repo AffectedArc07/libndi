@@ -95,8 +95,10 @@ ndi_find_context_t ndi_find_create() {
 		return NULL;
 
 	internal->client = avahi_client_new(avahi_simple_poll_get(internal->simple_poll), 0, client_callback, NULL, &error);
-	if (!internal->client)
+	if (!internal->client) {
+		fprintf(stderr, "Failed to create avahi client: %s\n", avahi_strerror(error));
 		return NULL;
+	}
 
 	internal->sb = avahi_service_browser_new(internal->client, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, "_ndi._tcp", NULL, 0, browse_callback, internal);
 	if (!internal->sb)

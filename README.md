@@ -20,3 +20,7 @@ LGPL v2.1
 5. `cmake -S . -B build`
 6. `cd build && make`
 * You may need to modify files in `examples/common/` to include the C standard lib.
+
+## Running
+
+- If you are getting segfaults, make sure you have `avahi-daemon` installed.
