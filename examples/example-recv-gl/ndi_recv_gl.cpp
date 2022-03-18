@@ -13,6 +13,7 @@
 #include "../common/yuv.h"
 
 #include <mutex>
+#include <string>
 
 std::list<ndi_packet_video_t*> _queue;
 std::mutex _mutex;
@@ -74,15 +75,13 @@ int main(int argc, char* argv[]) {
 	}
 
 	bool filter_sources = false;
-	char* source_filter;
+	std::string source_filter;
 
 	if (argc > 1) {
 		filter_sources = true;
 		source_filter = argv[1];
-		printf("Source filter: %s\n", source_filter);
+		printf("Source filter: %s\n", argv[1]);
 	}
-
-	
 
 	// NDI find source
 	ndi_find_context_t find_ctx = ndi_find_create();
@@ -99,7 +98,9 @@ int main(int argc, char* argv[]) {
 			if(filter_sources) {
 				// Only filtered source
 				for (int i = 0; i < sizeof(sources); i++) {
-					if(strcmp(sources[i].name, source_filter)) {
+					std::string target_filter = sources[i].name;
+					if(target_filter == source_filter) {
+						printf("Source found.\n");
 						target_source = sources[i];
 						valid_source = true;
 						break;
