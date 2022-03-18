@@ -73,15 +73,60 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
+	bool filter_sources = false;
+	char* source_filter;
+
+	if (argc > 1) {
+		filter_sources = true;
+		source_filter = argv[1];
+		printf("Source filter: %s\n", source_filter);
+	}
+
+	
+
+	// NDI find source
+	ndi_find_context_t find_ctx = ndi_find_create();
+	ndi_source_t  * sources = NULL;
+	int nb_sources = 0;
+    bool valid_source = false;
+	ndi_source_t target_source;
+	printf("Started source search\n");
+	while (!valid_source) {
+		printf("Looking for sources ...\n");
+		sources = ndi_find_sources(find_ctx, 5000, &nb_sources);
+
+		if(nb_sources > 0) {
+			if(filter_sources) {
+				// Only filtered source
+				for (int i = 0; i < sizeof(sources); i++) {
+					if(strcmp(sources[i].name, source_filter)) {
+						target_source = sources[i];
+						valid_source = true;
+						break;
+					}
+				}
+			} else {
+				// Just take the first
+				target_source = sources[0];
+				valid_source = true;
+			}
+		}		
+	}
+
+	printf("Found source: %s (%s:%d)\n", target_source.name, target_source.ip, target_source.port);
+
 	int width, height;
 	res_ogl(0, &width, &height);
 	printf("Screen #0: %dx%d\n", width, height);
 
     // Create Window
+	printf("Attempting to create window\n");
 	if ((ret = window_ogl(0, width, height)) < 0) {
 		printf("Failed to create window. Error: %d\n", ret);
 		return -1;
 	}
+
+	printf("Enabling textures\n");
 
 	glEnable(GL_TEXTURE_2D);
 	glClearColor(0, 0, 0, 1);
@@ -90,28 +135,20 @@ int main(int argc, char* argv[]) {
 	glewInit();
 #endif
 
+	printf("Enabling shaders\n");
+
     // Load YUV shader
 	if (yuv_init() < 0) {
 		printf("Failed to load YUV shader\n");
 		return -1;
 	}
 
+	printf("Binding shaders\n");
 	yuv_bind();
-
-	// NDI find source
-	ndi_find_context_t find_ctx = ndi_find_create();
-	ndi_source_t  * sources = NULL;
-	int nb_sources = 0;
-	while (!nb_sources) {
-		printf("Looking for sources ...\n");
-		sources = ndi_find_sources(find_ctx, 5000, &nb_sources);
-	}
-
-	printf("Found source: %s (%s:%d)\n", sources[0].name, sources[0].ip, sources[0].port);
 
     // NDI receive
 	ndi_recv_context_t recv_ctx = ndi_recv_create();
-	ret = ndi_recv_connect(recv_ctx, sources[0].ip, sources[0].port);
+	ret = ndi_recv_connect(recv_ctx, target_source.ip, target_source.port);
 	if (ret < 0) {
 		printf("Failed to connect to source\n");
 		return -1;
