@@ -91,7 +91,6 @@ int main(int argc, char* argv[]) {
 	ndi_source_t target_source;
 	printf("Started source search\n");
 	while (!valid_source) {
-		printf("Looking for sources ...\n");
 		sources = ndi_find_sources(find_ctx, 5000, &nb_sources);
 
 		if(nb_sources > 0) {
